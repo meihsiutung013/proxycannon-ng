@@ -100,7 +100,19 @@ iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 
 ############################
 # post install instructions
-############################
+############################ 
+
+sudo cp /etc/openvpn/easy-rsa/ta.key ~/
+sudo chown ubuntu:ubuntu ~/ta.key  
+
+sudo cp /etc/openvpn/easy-rsa/pki/ca.crt ~/
+sudo chown ubuntu:ubuntu ~/ca.crt  
+
+sudo cp /etc/openvpn/easy-rsa/pki/issued/client01.crt ~/
+sudo chown ubuntu:ubuntu ~/client01.crt 
+
+sudo cp /etc/openvpn/easy-rsa/pki/private/client01.key ~/
+sudo chown ubuntu:ubuntu ~/client01.key
 
 echo
 echo "=============================================="
