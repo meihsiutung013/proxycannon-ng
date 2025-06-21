@@ -30,18 +30,44 @@ The control-server is a OpenVPN server that your workstation will connect to. Th
 5. Fill out a User name, and for access type, select programmatic access. Click **Next**.
 6. Select the tab/box that's labeled **Attach existing policies directly**. Add the following policy: AmazonEC2FullAccess. Click **Next**, than **Create user**
 7. Copy the access key and secret for the control-server and paste it in ~/.aws/credentials ex:
-```
-[default]
-aws_access_key_id = REPLACE_WITH_YOUR_OWN
-aws_secret_access_key = REPLACE_WITH_YOUR_OWN
-region = us-east-2
-```
+    ```
+    [default]
+    aws_access_key_id = REPLACE_WITH_YOUR_OWN
+    aws_secret_access_key = REPLACE_WITH_YOUR_OWN
+    region = us-east-2
+    ```
 
 #### 4. Setup terraform
 Perform the following on the control-server:
 1. Copy your proxycannon.pem SSH key into `~/.ssh/proxycannon.pem`
+
+    Copy proxycannon.pem SSH key from windows to proxycannon control server:
+
+    ```
+    scp -i "proxycannon.pem" ubuntu@ec2-18-217-113-138.us-east-2.compute.amazonaws.com:/home/ubuntu/.ssh/proxycannon.pem
+    ```
+    In our SSH session on the Proxycannon Control Server:
+
+    ```
+    cp -v /home/ubuntu/.ssh/proxycannon.pem /root/.ssh/
+    chown -R root:root /root/.ssh
+    chmod 600 /root/.ssh/proxycannon.pem
+    ```
+
 2. cd into `proxycannon-ng/nodes/aws` and edit the `variables.tf` file updating it with the **subnet_id**. This is the same subnet_id that your control server is using. You can get this value from the AWS console when viewing the details of the control-server instance. Defining this subnet_id makes sure all launched exit-nodes are in the same subnet as your control server.
-2. Run `terraform init` to download the AWS modules. (you only need to do this once)
+
+    ```
+    nano /opt/proxycannon-ng/nodes/aws/variables.tf
+    ```
+    ![alt text](image.png)
+
+3. Run `terraform init` to download the AWS modules. (you only need to do this once)
+
+    ```
+    cd /opt/proxycannon-ng/nodes/aws/
+    terraform init
+    terraform apply
+    ```
 
 #### 5. Copy OpenVPN files to your workstation
 Copy the following files from the control-server to the `/etc/openvpn` directory on your workstation:
