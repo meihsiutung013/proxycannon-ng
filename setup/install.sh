@@ -32,28 +32,33 @@ cp configs/proxycannon-client.conf ~/proxycannon-client.conf
 # setup ca and certs - updated for Easy-RSA 3.x
 mkdir -p /etc/openvpn/ccd
 
+# Remover directorio existente si existe
+if [ -d /etc/openvpn/easy-rsa ]; then
+    rm -rf /etc/openvpn/easy-rsa
+fi
+
 make-cadir /etc/openvpn/easy-rsa
 cd /etc/openvpn/easy-rsa
 
-# Inicializar estructura PKI
-./easyrsa init-pki
+# Inicializar estructura PKI (forzar sobrescritura)
+echo "yes" | ./easyrsa init-pki
 
 # Construir la CA (te pedirá info, responde según lo necesario)
-echo -e "\n" | ./easyrsa build-ca nopass
+echo -e "\n" | ./easyrsa --batch build-ca nopass
 
 # Generar y firmar request para el servidor (Common Name = "server")
-printf "server\n" | ./easyrsa gen-req server nopass
-printf "yes\n" | ./easyrsa sign-req server server
+printf "server\n" | ./easyrsa --batch gen-req server nopass
+printf "yes\n" | ./easyrsa --batch sign-req server server
 
 # Generar y firmar para los clientes (Common Name = "client0X")
 for x in $(seq -f "%02g" 1 10); do
-  printf "client${x}\n" | ./easyrsa gen-req client${x} nopass
-  printf "yes\n" | ./easyrsa sign-req client client${x}
+  printf "client${x}\n" | ./easyrsa --batch gen-req client${x} nopass
+  printf "yes\n" | ./easyrsa --batch sign-req client client${x}
 done
 
 # Node01 (Common Name = "node01")
-printf "node01\n" | ./easyrsa gen-req node01 nopass
-printf "yes\n" | ./easyrsa sign-req client node01
+printf "node01\n" | ./easyrsa --batch gen-req node01 nopass
+printf "yes\n" | ./easyrsa --batch sign-req client node01
 
 # Generar parámetros DH
 ./easyrsa gen-dh
@@ -72,6 +77,11 @@ fi
 ####################
 # start services
 ####################
+# Detener servicios si están corriendo
+systemctl stop openvpn@node-server.service 2>/dev/null || true
+systemctl stop openvpn@client-server.service 2>/dev/null || true
+
+# Iniciar servicios
 systemctl start openvpn@node-server.service
 systemctl start openvpn@client-server.service
 
