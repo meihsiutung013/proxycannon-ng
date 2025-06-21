@@ -14,8 +14,7 @@ apt -y install unzip git openvpn easy-rsa
 wget https://releases.hashicorp.com/terraform/1.12.2/terraform_1.12.2_linux_amd64.zip
 unzip terraform_1.12.2_linux_amd64.zip
 cp terraform /usr/bin/
-rm -f terraform_1.12.2_linux_amd64.zip
-rm -rf terraform
+rm -f terraform_1.12.2_linux_amd64.zip terraform
 
 # crea directorio para AWS credentials sólo si no existe
 [ -d ~/.aws ] || mkdir ~/.aws
