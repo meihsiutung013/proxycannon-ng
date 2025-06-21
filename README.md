@@ -20,6 +20,8 @@ The control-server is a OpenVPN server that your workstation will connect to. Th
     cd proxycannon-ng/setup
     chmod +x ./install.sh
     sudo ./install.sh
+    chmod +x proxycannon-ng/nodes/aws/add_route.bash
+    chmod +x proxycannon-ng/nodes/aws/del_route.bash
     ```
 
 #### 3. Create a new IAM user, set the needed permissions, and copy over your keys. It's quick:
@@ -36,6 +38,9 @@ The control-server is a OpenVPN server that your workstation will connect to. Th
     aws_secret_access_key = REPLACE_WITH_YOUR_OWN
     region = us-east-2
     ```
+    ```
+    scp -i "proxycannon.pem" "C:\Users\Tung\.aws\credentials" ubuntu@ec2-18-217-113-138.us-east-2.compute.amazonaws.com:/home/ubuntu/.aws/credentials
+    ```
 
 #### 4. Setup terraform
 Perform the following on the control-server:
@@ -49,33 +54,33 @@ Perform the following on the control-server:
     In our SSH session on the Proxycannon Control Server:
 
     ```
-    cp -v /home/ubuntu/.ssh/proxycannon.pem /root/.ssh/
-    chown -R root:root /root/.ssh
-    chmod 600 /root/.ssh/proxycannon.pem
+    sudo cp -v /home/ubuntu/.ssh/proxycannon.pem /root/.ssh/
+    sudo chown -R root:root /root/.ssh
+    sudo chmod 600 /root/.ssh/proxycannon.pem
     ```
 
 2. cd into `proxycannon-ng/nodes/aws` and edit the `variables.tf` file updating it with the **subnet_id**. This is the same subnet_id that your control server is using. You can get this value from the AWS console when viewing the details of the control-server instance. Defining this subnet_id makes sure all launched exit-nodes are in the same subnet as your control server.
 
     ```
-    nano /opt/proxycannon-ng/nodes/aws/variables.tf
+    nano /proxycannon-ng/nodes/aws/variables.tf
     ```
     ![alt text](image.png)
 
 3. Run `terraform init` to download the AWS modules. (you only need to do this once)
 
     ```
-    cd /opt/proxycannon-ng/nodes/aws/
+    cd /proxycannon-ng/nodes/aws/
     terraform init
-    terraform apply
+    terraform apply --auto-approve
     ```
 
 #### 5. Copy OpenVPN files to your workstation
 Copy the following files from the control-server to the `/etc/openvpn` directory on your workstation:
 - ~/proxycannon-client.conf
-- /etc/openvpn/easy-rsa/keys/ta.key
-- /etc/openvpn/easy-rsa/keys/ca.crt
-- /etc/openvpn/easy-rsa/keys/client01.crt
-- /etc/openvpn/easy-rsa/keys/client01.key  
+- /etc/openvpn/easy-rsa/ta.key
+- /etc/openvpn/easy-rsa/pki/ca.crt
+- /etc/openvpn/easy-rsa/pki/issued/client01.crt
+- /etc/openvpn/easy-rsa/pki/private/client01.key   
 
 Test OpenVPN connectivity from your workstation by running:
 ```
