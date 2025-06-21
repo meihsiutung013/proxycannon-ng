@@ -42,17 +42,17 @@ cd /etc/openvpn/easy-rsa
 echo -e "\n" | ./easyrsa build-ca nopass
 
 # Generar y firmar request para el servidor (Common Name = "server")
-./easyrsa gen-req server nopass <<< "server"
+printf "server\n" | ./easyrsa gen-req server nopass
 yes yes | ./easyrsa sign-req server server
 
 # Generar y firmar para los clientes (Common Name = "client0X")
 for x in $(seq -f "%02g" 1 10); do
-  ./easyrsa gen-req client${x} nopass <<< "client${x}"
+  printf "client${x}\n" | ./easyrsa gen-req client${x} nopass
   yes yes | ./easyrsa sign-req client client${x}
 done
 
 # Node01 (Common Name = "node01")
-./easyrsa gen-req node01 nopass <<< "node01"
+printf "node01\n" | ./easyrsa gen-req node01 nopass
 yes yes | ./easyrsa sign-req client node01
 
 # Generar parámetros DH
