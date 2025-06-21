@@ -43,17 +43,17 @@ echo -e "\n" | ./easyrsa build-ca nopass
 
 # Generar y firmar request para el servidor (Common Name = "server")
 printf "server\n" | ./easyrsa gen-req server nopass
-yes yes | ./easyrsa sign-req server server
+printf "yes\n" | ./easyrsa sign-req server server
 
 # Generar y firmar para los clientes (Common Name = "client0X")
 for x in $(seq -f "%02g" 1 10); do
   printf "client${x}\n" | ./easyrsa gen-req client${x} nopass
-  yes yes | ./easyrsa sign-req client client${x}
+  printf "yes\n" | ./easyrsa sign-req client client${x}
 done
 
 # Node01 (Common Name = "node01")
 printf "node01\n" | ./easyrsa gen-req node01 nopass
-yes yes | ./easyrsa sign-req client node01
+printf "yes\n" | ./easyrsa sign-req client node01
 
 # Generar parámetros DH
 ./easyrsa gen-dh
@@ -62,6 +62,12 @@ yes yes | ./easyrsa sign-req client node01
 openvpn --genkey secret /etc/openvpn/easy-rsa/ta.key
 
 echo "Certificados y claves generados en /etc/openvpn/easy-rsa/pki/"
+
+# Verificar que los certificados necesarios existen
+if [ ! -f "pki/issued/server.crt" ] || [ ! -f "pki/private/server.key" ]; then
+    echo "Error: Los certificados del servidor no se generaron correctamente"
+    exit 1
+fi
 
 ####################
 # start services
