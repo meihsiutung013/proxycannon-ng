@@ -44,7 +44,7 @@ Perform the following on the control-server:
     Copy proxycannon.pem SSH key from windows to proxycannon control server:
 
     ```
-    scp -i "proxycannon.pem" ubuntu@ec2-18-217-113-138.us-east-2.compute.amazonaws.com:/home/ubuntu/.ssh/proxycannon.pem
+    scp -i "proxycannon.pem" "C:\Users\Tung\.ssh\proxycannon.pem" ubuntu@ec2-18-217-113-138.us-east-2.compute.amazonaws.com:/home/ubuntu/.ssh/proxycannon.pem
     ```
     In our SSH session on the Proxycannon Control Server:
 
