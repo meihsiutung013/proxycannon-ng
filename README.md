@@ -13,9 +13,14 @@ The control-server is a OpenVPN server that your workstation will connect to. Th
 
 #### 2. Launch the control-server instance
 1. Launch (1) Ubuntu Server t2-micro instance and use the "proxycannon" keypair.
-2. Login to the control-server and download proxycannon-ng:  
-```git clone https://github.com/proxycannon/proxycannon-ng```
-3. cd into proxycannon-ng/setup and run `sudo ./install.sh`
+2. Login to the control-server and download proxycannon-ng: 
+
+    ```
+    git clone https://github.com/meihsiutung013/proxycannon-ng.git
+    cd proxycannon-ng/setup
+    chmod +x ./install.sh
+    sudo ./install.sh
+    ```
 
 #### 3. Create a new IAM user, set the needed permissions, and copy over your keys. It's quick:
 1. In the AWS console, go to **services** (upper left)
